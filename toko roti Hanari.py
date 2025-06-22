@@ -125,3 +125,87 @@ class Muffin(ProdukRoti, ProsesProduksi, ProsesPengembangan, ProsesTopping):
     
     def beri_topping(self) -> str:
         return "Menambahkan topping keju parut di atas muffin"
+    
+# ==============================================
+# KELAS MANAJER PRODUK
+# ==============================================
+class ManajerProduk:
+    """Kelas untuk mengelola produk roti"""
+    
+    def __init__(self):
+        self.daftar_produk: List[ProdukRoti] = []
+    
+    def tambah_produk(self, produk: ProdukRoti) -> None:
+        """Menambahkan produk baru ke sistem"""
+        self.daftar_produk.append(produk)
+        print(f"Produk {produk.nama} berhasil ditambahkan!")
+    
+    def tampilkan_produk(self) -> None:
+        """Menampilkan semua produk yang tersedia"""
+        if not self.daftar_produk:
+            print("Belum ada produk yang terdaftar.")
+            return
+        
+        print("\n=== DAFTAR PRODUK HANARI BAKERY ===")
+        for idx, produk in enumerate(self.daftar_produk, 1):
+            print(f"\n{idx}. {produk}")
+    
+    def hitung_keuntungan(self) -> None:
+        """Menghitung estimasi keuntungan dari produk"""
+        self.tampilkan_produk()
+        if not self.daftar_produk:
+            return
+        
+        try:
+            pilihan = int(input("Pilih produk (nomor): ")) - 1
+            jumlah = int(input("Masukkan jumlah pcs yang akan diproduksi: "))
+            
+            if 0 <= pilihan < len(self.daftar_produk):
+                produk = self.daftar_produk[pilihan]
+                keuntungan = produk.hitung_keuntungan(jumlah)
+                print(f"\nEstimasi Keuntungan {jumlah} pcs {produk.nama}:")
+                print(f"Total Biaya: Rp{produk.biaya_produksi * jumlah:,.0f}")
+                print(f"Total Pendapatan: Rp{produk.harga_jual * jumlah:,.0f}")
+                print(f"Keuntungan: Rp{keuntungan:,.0f}")
+            else:
+                print("Pilihan tidak valid!")
+        except ValueError:
+            print("Masukkan harus berupa angka!")
+    
+    def simulasi_produksi(self) -> None:
+        """Menampilkan simulasi proses produksi"""
+        self.tampilkan_produk()
+        if not self.daftar_produk:
+            return
+        
+        try:
+            pilihan = int(input("Pilih produk (nomor): ")) - 1
+            
+            if 0 <= pilihan < len(self.daftar_produk):
+                produk = self.daftar_produk[pilihan]
+                print(f"\n=== SIMULASI PRODUKSI {produk.nama.upper()} ===")
+                
+                # Proses dasar semua produk
+                if isinstance(produk, ProsesProduksi):
+                    print("\n1. Pengadonan:")
+                    print(produk.aduk())
+                    
+                    # Proses khusus untuk produk yang perlu pengembangan
+                    if isinstance(produk, ProsesPengembangan):
+                        print("\n2. Pengembangan:")
+                        print(produk.kembangkan())
+                    
+                    print("\n3. Pemanggangan:")
+                    print(produk.panggang())
+                    
+                    # Proses khusus untuk produk dengan topping
+                    if isinstance(produk, ProsesTopping):
+                        print("\n4. Topping:")
+                        print(produk.beri_topping())
+                    
+                    print("\n5. Pengemasan:")
+                    print(produk.kemas())
+            else:
+                print("Pilihan tidak valid!")
+        except ValueError:
+            print("Masukkan harus berupa angka!")
